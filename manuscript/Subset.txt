@@ -1,1 +1,5 @@
 preface.md
+uiintro.md
+apiintro.md
+apitools.md
+apimcp.md
