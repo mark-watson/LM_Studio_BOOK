@@ -24,15 +24,17 @@ def get_llm_response_with_sdk(prompt):
         # Send a prompt to the loaded model.
         print("Sending prompt to the model...")
         response = model.respond(
+          {"messages":
             [
                 {"role": "system", "content": "You are a helpful AI assistant."},
                 {"role": "user", "content": prompt},
             ]
+          }
         )
 
         # The 'response' object contains the full API response.
         # The text content is in response.text
-        return response.text
+        return response
 
     except Exception as e:
         print(f"\nAn error occurred:")

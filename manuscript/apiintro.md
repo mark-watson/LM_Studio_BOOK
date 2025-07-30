@@ -2,6 +2,7 @@
 
 Dear reader, we will start with two simple examples, one using the OpenAI AI compatibility features of LM Studio and the other using the Python **lmstudio** package. First, make sure you hit the green icon on the left menu area:
 
+{width: "60%"}
 ![Enable The API in "developer's mode using the slider in the upper left corner of the app. You should see "Status: Running" ](images/ui_dev_api_server.jpg)
 
 When you installed LM Studio you were asked if you wanted "developer mode" enabled. That prompt during installation can be a bit misleading. You haven't been locked out of any features.
@@ -106,4 +107,106 @@ The capital of France is **Paris**.
 
 ## Using the Python lmstudio Package
 
-The 
+Here is a simple example that assumes the server is running and a model is loaded:
+
+```python
+import lmstudio as lms
+model = lms.llm()
+print(model.respond("Sally is 77, Bill is 32, and Alex is 44 years old. Pairwise, what are their age differences? Print results in JSON format. Be concise and only provide a correct answer, no need to think about different correct answers."))
+```
+
+Here is sample output:
+
+```console
+$ uv run lmstudio_simple.py
+<think>
+To determine the age differences between Sally, Bill, and Alex, I will list their ages first. Sally is 77 years old, Bill is 32 years old, and Alex is 44 years old.
+
+Next, I'll calculate the age difference between each pair:
+
+1. **Sally and Bill**: Subtract Bill's age from Sally's age.
+   - 77 (Sally) - 32 (Bill) = 45 years.
+
+2. **Sally and Alex**: Subtract Alex's age from Sally's age.
+   - 77 (Sally) - 44 (Alex) = 33 years.
+
+3. **Bill and Alex**: Subtract Bill's age from Alex's age.
+   - 44 (Alex) - 32 (Bill) = 12 years.
+
+Finally, I'll format the results in JSON as specified: a key for each pair of names with their respective age difference.
+</think>
+
+  ```json
+  {
+    "Sally and Bill": 45,
+    "Sally and Alex": 33,
+    "Bill and Alex": 12
+  }
+  ```
+```
+
+Here is a more complex example that demonstrates how to pass multiple messages and a custom system prompt:
+
+```python
+import lmstudio as lms
+
+# --- Main Execution ---
+def get_llm_response_with_sdk(prompt):
+    """
+    Loads a model and gets a response using the lmstudio-python SDK.
+    """
+    # Before running this, make sure you have:
+    # 1. Downloaded and installed LM Studio.
+    # 2. Started the LM Studio application. The SDK communicates directly
+    #    with the running application; you don't need to manually start the server.
+
+    try:
+        # Load a model by its repository ID from the Hugging Face Hub.
+        # The SDK will communicate with LM Studio to use the model.
+        # If the model isn't downloaded, LM Studio might handle that,
+        # but it's best to have it downloaded first.
+        #
+        # Replace this with the identifier of a model you have downloaded.
+        # e.g., "gemma-2-9b-it-gguf"
+        print("Loading model...")
+        model = lms.llm("google/gemma-3n-e4b")
+
+        # Send a prompt to the loaded model.
+        print("Sending prompt to the model...")
+        response = model.respond(
+          {"messages":
+            [
+                {"role": "system", "content": "You are a helpful AI assistant."},
+                {"role": "user", "content": prompt},
+            ]
+          }
+        )
+
+        # The 'response' object contains the full API response.
+        # The text content is in response.text
+        return response
+
+    except Exception as e:
+        print(f"\nAn error occurred:")
+        print("Please ensure the LM Studio application is running and the model identifier is correct.")
+        print(f"Error details: {e}")
+
+
+if __name__ == "__main__":
+    print("--- Local LLM Interaction via lmstudio-python SDK ---")
+    print("\n--- Model Response ---")
+    print(get_llm_response_with_sdk("Explain the significance of the Rosetta Stone in one paragraph."))
+```
+
+Sample output may look like this:
+
+```console
+$ uv run lmstudio_library_example.py
+--- Local LLM Interaction via lmstudio-python SDK ---
+
+--- Model Response ---
+Loading model...
+Sending prompt to the model...
+The Rosetta Stone is a fragment of a larger stele inscribed with the same text in three scripts: hieroglyphic, demotic, and ancient Greek. Its discovery in 1799 was a pivotal moment in Egyptology because it provided the key to deciphering hieroglyphics, a writing system that had been lost for centuries. By comparing the known Greek text to the unknown Egyptian scripts, scholars like Jean-François Champollion were able to unlock the meaning of hieroglyphics, opening up a vast treasure trove of information about ancient Egyptian history, culture, and religion.  Essentially, the Rosetta Stone provided the crucial bridge for understanding a civilization's written language and allowed us to finally "read" ancient Egypt.
+```
+
