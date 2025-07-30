@@ -103,3 +103,7 @@ Response from local model:
 The capital of France is **Paris**. 
 ```
 
+
+## Using the Python lmstudio Package
+
+The 

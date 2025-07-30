@@ -1,5 +1,6 @@
 preface.md
 uiintro.md
+cliintro.md
 apiintro.md
 apitools.md
 apimcp.md
