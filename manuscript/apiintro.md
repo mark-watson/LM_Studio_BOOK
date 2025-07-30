@@ -136,13 +136,13 @@ Next, I'll calculate the age difference between each pair:
 Finally, I'll format the results in JSON as specified: a key for each pair of names with their respective age difference.
 </think>
 
-  ```json
-  {
-    "Sally and Bill": 45,
-    "Sally and Alex": 33,
-    "Bill and Alex": 12
-  }
-  ```
+``json
+{
+  "Sally and Bill": 45,
+  "Sally and Alex": 33,
+  "Bill and Alex": 12
+}
+``
 ```
 
 Here is a more complex example that demonstrates how to pass multiple messages and a custom system prompt:
