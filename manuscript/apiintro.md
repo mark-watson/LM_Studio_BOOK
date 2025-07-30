@@ -78,3 +78,28 @@ This Python script uses the official openai library to connect to a local AI mod
 It sends the question "What is the capital of France?" to your local model and prints its response to the console. The key is the base_url="http://localhost:1234/v1" line, which redirects the API request to the LM Studio server.
 
 In the next chapter we will cover "tool use" which also reffered to as "function calling" (i.e., we write Python functions, configure API calls to inform a model the names and required arguments for tools/functions).
+
+If you don't enable LM Server's inference API, you will see an error like:
+
+```console
+$ uv run openai_cmpatibility.py
+--- Local LLM Interaction via OpenAI Compatibility ---
+
+An error occurred:
+It's likely the LM Studio server is not running or the model is not loaded.
+Please ensure the server is active and a model is selected.
+Error details: Connection error.
+```
+
+Note that I use **uv** as a Python package manager and to run scripts. The examples also have standard Python **requirements.txt** files that you can alternatively use with **pip** and **python3**.
+
+When you have the server inference running on LM Studio you should see output like this:
+
+```console
+$ uv run openai_cmpatibility.py
+--- Local LLM Interaction via OpenAI Compatibility ---
+
+Response from local model:
+The capital of France is **Paris**. 
+```
+
