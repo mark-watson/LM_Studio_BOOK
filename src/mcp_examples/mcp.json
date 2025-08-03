@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "local-fs-server": {
+      "command": "python",
+      "args": [
+        "/GITHUB/LM_Studio_BOOK/src/server.py"
+      ]
+    }
+  }
+}
+

@@ -177,7 +177,7 @@ We started with a simple example so you understand the low-level process of supp
 
 ## Creating a General Purpose Tools/Function Calling Library
 
-TBD
+This Python code in the file **tool_use/function_calling_library.py** provides a lightweight and flexible framework for integrating external functions as "tools" with a large language model (LLM), such as one hosted locally with a tool like LM Studio. It defines two primary classes: **ToolManager**, which handles the registration and schema generation for available tools, and **ConversationHandler**, which orchestrates the multi-step interaction between the user, the LLM, and the tools. This approach allows the LLM to decide when to call a function, execute it within the Python environment, and then use the result to formulate a more informed and capable response.
 
 ```python
 import json
@@ -395,11 +395,17 @@ If you don't need a tool, answer the user's question directly.
         return None
 ```
 
-TBD
+The first class, **ToolManager**, serves as a registry for the functions you want to expose to the LLM. Its core method, `register_tool`, uses Python's `inspect` module to dynamically analyze a function's signature and docstring. It extracts the function's name, its parameters (including their type hints), and their descriptions from the "Args" section of the docstring. This information is then compiled into a JSON schema that describes the tool in a machine-readable format. This automated process is powerful because it allows a developer to make a standard Python function available to the LLM simply by adding it to the manager, without manually writing complex JSON schemas.
+
+The second class, **ConversationHandler**, is the engine that drives the interaction. When its `run` method is called, it first constructs a detailed **system prompt**. This special prompt instructs the LLM on how to behave and includes the JSON schemas for all registered tools, informing the model of its capabilities. The user's question is then sent to the LLM. The model's first task is to decide whether to answer directly or to use one of the provided tools. If it determines a tool is necessary, it is instructed to respond *only* with a JSON object specifying the `tool_name` and the `parameters` needed to run it.
+
+The process concludes with a crucial **two-step execution logic**. If the `ConversationHandler` receives a valid JSON tool call from the LLM, it executes the corresponding Python function with the provided parameters. The return value from that function is then packaged into a new message with the role "tool" and sent back to the LLM in a second API call. This second call prompts the model to synthesize the tool's output into a final, natural-language answer for the user. If the model's initial response was not a tool call, the system assumes no tool was needed and simply presents that response directly to the user. This conditional, multi-step approach enables the LLM to leverage external code to answer questions it otherwise couldn't.
+
 
 ### First example Using Function Calling Library: Generate Python and Execute to Answer User Questions
 
-TBD
+This Python script in the file **tool_use/test1.py** demonstrates a practical implementation of the **function_calling_library** by creating a specific tool designed to solve mathematical problems. It defines a function, solve_math_problem, that can execute arbitrary Python code in a secure, isolated process. The main part of the script then initializes the ToolManager and ConversationHandler from the library, registers the new math tool, and runs two example conversations: one that requires complex calculation, thereby triggering the tool, and another that is a general knowledge question, which the LLM answers directly.
+
 
 ```python
 import os
@@ -481,6 +487,12 @@ if __name__ == "__main__":
     handler.run(non_tool_prompt)
 ```
 
+The core of this script is the `solve_math_problem` function, which serves as the custom tool. It's designed to safely execute a string of Python code passed to it by the LLM. To avoid security risks associated with `eval()` or `exec()`, it writes the code to a temporary file (`temp.py`). It then uses Python's `subprocess` module to run this file as an entirely separate process. This sandboxes the execution, and the `capture_output=True` argument ensures that any output printed by the script (e.g., the result of a calculation) is captured. The function includes robust error handling, returning any standard error from the script if it fails, and a `finally` block to guarantee the temporary file is deleted, maintaining a clean state.
+
+Please note that code generated my the LLM is not fully sandboxed and this approach is tailored to personal development environments. For production consider running the generated code in a container.
+
+The main execution block, guarded by `if __name__ == "__main__"`, orchestrates the entire demonstration. It begins by configuring the `OpenAI` client to connect to a local server, such as LM Studio. It then instantiates the `ToolManager` and registers the `solve_math_problem` function as an available tool. With the tool ready, it creates a `ConversationHandler` to manage the flow. The script then showcases the system's decision-making ability by running two different prompts. The first asks for two distinct mathematical calculations, a task that perfectly matches the `solve_math_problem` tool's purpose. The second prompt is a general knowledge question that requires no calculation, demonstrating the LLM's ability to differentiate between tasks and answer directly when a tool is not needed.
+
 Sample output:
 
 ```console
@@ -513,7 +525,8 @@ TBD
 
 ### Second example Using Function Calling Library: Stub of Weather API
 
-TBD
+This script in the file **tool_use/test2.py** provides another clear example of how the **function_calling_library** can be used to extend an LLM's capabilities, this time by simulating an external data fetch from a weather API. It defines a simple get_weather function that returns mock data for specific cities. The main execution logic then sets up the ConversationHandler, registers this new tool, and processes two distinct user prompts to demonstrate the LLM's ability to intelligently decide when to call the function and when to rely on its own knowledge base.
+
 
 ```python
 import json
@@ -566,6 +579,10 @@ if __name__ == "__main__":
     another_prompt = "What do Chicago and Tokyo have in common? Provide a fun answer."
     handler.run(another_prompt)
 ```
+
+The custom tool in this example is the `get_weather` function. It is defined with clear parameters, `city` and `unit`, and includes type hints and a docstring that the `ToolManager` will use to automatically generate its schema. Instead of making a live call to a weather service, this function contains simple conditional logic to return hardcoded JSON strings for "Chicago" and "Tokyo," or an error if another city is requested. This mock implementation is a common and effective development practice, as it allows you to build and test the entire function-calling logic without depending on external network requests or API keys. The function's return value is a JSON string, which is a standard data interchange format easily understood by both the Python environment and the LLM.
+
+The main execution block follows the same clear, step-by-step pattern as the previous example. It configures the client, initializes the `ToolManager`, and registers the `get_weather` function. After setting up the `ConversationHandler`, it runs two test cases that highlight the system's contextual awareness. The first prompt, "What's the weather like in Tokyo in celsius?", directly maps to the functionality of the `get_weather` tool, and the LLM correctly identifies this and generates the appropriate JSON tool call. The second prompt, which asks for commonalities between the two cities, is a conceptual question outside the tool's scope. In this case, the LLM correctly bypasses the tool-calling mechanism and provides a direct, creative answer from its own training data, demonstrating the robustness of the overall approach.
 
 Sample output:
 
