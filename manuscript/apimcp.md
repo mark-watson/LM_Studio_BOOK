@@ -240,78 +240,75 @@ Function Name: The name of the Python function (e.g., def list_directory(...)) i
 
 Docstring: The function's docstring (the string literal within """...""") is used as the description of the tool. As discussed previously, this is the most critical element for the LLM's ability to understand what the tool does and when to use it.
 Type Hints: The Python type hints for the function's parameters and return value (e.g., path: str -> list[str]) are used to automatically generate the inputSchema and output schema for the tool. This provides a structured contract that the LLM must adhere to when generating a tool call, ensuring that the server receives data in the expected format.
-The following design pattern illustrates the elegance of this approach:
+
+The example file **LM_Studio_BOOK/src/mcp_examples/server.py** contains the definitins of three tools. The following script, server.py, implements the MCP server with the three defined file system tools. The code is heavily commented to explain not only the "what" but also the "why" behind the implementation choices, particularly concerning error handling and security.
 
 
-TBD
+```python
+from fastmcp import FastMCP
+import os
 
-use file_listing_service.py for example
+# Initialize the MCP server
+app = FastMCP("my-mcp-server")
 
-This short, self-contained block of Python code contains all the information necessary for the SDK to generate a complete and valid MCP tool manifest, which would otherwise require dozens of lines of manually written JSON.
+@app.tool()
+def add_numbers(a: int, b: int) -> int:
+    """Adds two numbers together."""
+    return a + b
+
+@app.tool()
+def get_current_time_for_mark() -> str:
+    """Returns the current time."""
+    import datetime
+    return datetime.datetime.now().strftime("%H:%M:%S")
+
+@app.tool()
+def list_directory(path: str = ".") -> list[str]:
+    """
+    Lists all files and subdirectories within a given local directory path.
+    The path should be an absolute path or relative to the user's home directory.
+    """
+    try:
+        # Implementation logic will go here
+        expanded_path = os.path.expanduser(path)
+        return os.listdir(expanded_path)
+    except FileNotFoundError:
+        return # Return an empty list if path not found
+    
+# To run the server (e.g., via stdio for local development)
+if __name__ == "__main__":
+    app.run()
+```
+
+Later we will see how to activate these three tools in LM Studio.
 
 4.4 Data Flow and State Management
 
-For the file system agent, the tools will be designed to be stateless. Each tool call is an atomic, self-contained operation. The read_file function, for example, receives the file path it needs to operate on within the call itself. It does not rely on any previous state stored on the server. This is a robust design principle for MCP servers, as it makes them simple to reason about, test, and scale. The state of the conversation is managed by the LLM and the Host within the chat history, not by the tool server.
+In general the tools will be designed to be stateless. Each tool call is an atomic, self-contained operation. The **get_current_time_for_mark** function, for example, simply calls a Python operating system function to get the local time. It does not rely on any previous state stored on the server. This is a robust design principle for MCP servers, as it makes them simple to reason about, test, and scale. The state of the conversation is managed by the LLM and the Host within the chat history, not by the tool server.
 
 The data flow for a tool call is a straightforward JSON-RPC exchange. The Host sends a request object containing the method ("tools/call") and params (the tool name and arguments). The server processes this request and sends back a response object containing either the result of the successful operation or an error object if a protocol-level failure occurred.
 
 The following table provides a quick reference to the key SDK components used in this design.
 
-Table 3: Key Components of the MCP Python SDK
-
-Component	Type	Purpose	Example Usage
-FastMCP	Class	High-level server implementation that simplifies tool registration and lifecycle management.	mcp = FastMCP()
-@mcp.tool()	Decorator	Registers a Python function as an MCP tool, automatically generating its manifest from its signature and docstring.	@mcp.tool() def my_function():...
-mcp.run()	Method	Starts the MCP server, listening for connections via the standard input/output (stdio) transport.	if __name__ == "__main__": mcp.run()
-str, int, list, dict, bool, None	Python Types	Used with type hints to define the inputSchema for tool arguments. All types must be JSON-serializable.	def get_user(id: int) -> dict:
-Part V: Implementation: A Practical Python MCP Server and Client
-This section provides the complete, production-ready source code for the local file system agent. It includes the fully annotated Python script for the MCP server (server.py), a simple client script for testing (client.py), and a step-by-step guide to integrate and execute the entire system with LM Studio.
-
-5.1 server.py: The Complete MCP Server
-
-The following script, server.py, implements the MCP server with the three defined file system tools. The code is heavily commented to explain not only the "what" but also the "why" behind the implementation choices, particularly concerning error handling and security.
-
-
-This short, self-contained block of Python code contains all the information necessary for the SDK to generate a complete and valid MCP tool manifest, which would otherwise require dozens of lines of manually written JSON.
-
-4.4 Data Flow and State Management
-
-For the file system agent, the tools will be designed to be stateless. Each tool call is an atomic, self-contained operation. The read_file function, for example, receives the file path it needs to operate on within the call itself. It does not rely on any previous state stored on the server. This is a robust design principle for MCP servers, as it makes them simple to reason about, test, and scale. The state of the conversation is managed by the LLM and the Host within the chat history, not by the tool server.
-
-The data flow for a tool call is a straightforward JSON-RPC exchange. The Host sends a request object containing the method ("tools/call") and params (the tool name and arguments). The server processes this request and sends back a response object containing either the result of the successful operation or an error object if a protocol-level failure occurred.
+| Component Type | Purpose | Example Usage |
+|---|---|---|
+| `FastMCP` Class | High-level server implementation that simplifies tool registration and lifecycle management. | `mcp = FastMCP()` |
+| `@mcp.tool()` Decorator | Registers a Python function as an MCP tool, automatically generating its manifest from its signature and docstring. | `@mcp.tool() def my_function():...` |
+| `mcp.run()` Method | Starts the MCP server, listening for connections via the standard input/output (stdio) transport. | `if __name__ == "__main__": mcp.run()` |
+| `str`, `int`, `list`, `dict`, `bool`, `None` | Used with type hints to define the `inputSchema` for tool arguments. All types must be JSON-serializable. | `def get_user(id: int) -> dict:` |
 
 The following table provides a quick reference to the key SDK components used in this design.
 
-Table 3: Key Components of the MCP Python SDK
-
-Component	Type	Purpose	Example Usage
-FastMCP	Class	High-level server implementation that simplifies tool registration and lifecycle management.	mcp = FastMCP()
-@mcp.tool()	Decorator	Registers a Python function as an MCP tool, automatically generating its manifest from its signature and docstring.	@mcp.tool() def my_function():...
-mcp.run()	Method	Starts the MCP server, listening for connections via the standard input/output (stdio) transport.	if __name__ == "__main__": mcp.run()
-str, int, list, dict, bool, None	Python Types	Used with type hints to define the inputSchema for tool arguments. All types must be JSON-serializable.	def get_user(id: int) -> dict:
-Part V: Implementation: A Practical Python MCP Server and Client
-This section provides the complete, production-ready source code for the local file system agent. It includes the fully annotated Python script for the MCP server (server.py), a simple client script for testing (client.py), and a step-by-step guide to integrate and execute the entire system with LM Studio.
-
-5.1 server.py: The Complete MCP Server
-
-The following script, server.py, implements the MCP server with the three defined file system tools. The code is heavily commented to explain not only the "what" but also the "why" behind the implementation choices, particularly concerning error handling and security.
-
-TBD
-
-use server.py for example
-
-TBD
-
-5.2 client.py: A Testing Script to Complete the Loop
-
-To test the server end-to-end, we need a client program that can send a prompt to the LLM running in LM Studio. This script uses the openai Python library to connect to LM Studio's OpenAI-compatible API endpoint and issue a command that should trigger one of our newly created tools.
-
-TBD
-
-use client.y for example
+| Component Type | Purpose | Example Usage |
+|---|---|---|
+| `FastMCP` Class | High-level server implementation that simplifies tool registration and lifecycle management. | `mcp = FastMCP()` |
+| `@mcp.tool()` Decorator | Registers a Python function as an MCP tool, automatically generating its manifest from its signature and docstring. | `@mcp.tool() def my_function():...` |
+| `mcp.run()` Method | Starts the MCP server, listening for connections via the standard input/output (stdio) transport. | `if __name__ == "__main__": mcp.run()` |
+| `str`, `int`, `list`, `dict`, `bool`, `None` | Used with type hints to define the `inputSchema` for tool arguments. All types must be JSON-serializable. | `def get_user(id: int) -> dict:` |
 
 
-5.3 Integration and Execution Guide
+
+## LM Studio Integration and Execution Guide
 
 Follow these steps to run the complete system:
 
@@ -327,26 +324,26 @@ Configure mcp.json:
 
 Paste the following JSON configuration into the editor. Replace /Users/markw/GITHUB/LM_Studio_BOOK/src/mcp_examples/ with the absolute path to the local-fs-mcp-server directory you created.
 
-
+```json
 {
-  "mcpServers": {
-    "local-fs-server": {
-      "command": "python",
+  "math-and-time-and-files": {
       "command": "/Users/markw/GITHUB/LM_Studio_BOOK/src/mcp_examples/.venv/bin/python",
       "args": [
         "/Users/markw/GITHUB/LM_Studio_BOOK/src/mcp_examples/server.py"
       ]
-    }
   }
 }
+```
+
+Note that we will be running the tools in the file **server.py** that we saw earlier.
 
 Save the file (Ctrl+S or Cmd+S). LM Studio will automatically detect the change and launch your server.py script in a background process. You should see the log messages from your server appear in the "Program" tab's log viewer.
 
-Run the Client: Open a new terminal window, navigate to your project directory, ensure your virtual environment is active, and run the client script:
+### Run the New Tools
 
-TBD
+Open a new chat tab in LM Studio. Enter a prompt like **what time is it?**
 
-Approve the Tool Call: The client script will hang after printing "Sending prompt...". Immediately switch to the LM Studio application window. The tool call confirmation dialog will appear. Review the request ("The model wants to run list_directory...") and click "Allow".
+You will by default see a popup dialog asking you to approve the tool tall. Review the request ("The model wants to run **get_current_time_for_mark** ...") and click "Allow".
 
 Observe the Result: Switch back to your terminal. After you approve the tool call, the client.py script will receive the final response from the LLM, which will now contain the list of files from your home directory, and print it to the console.
 
