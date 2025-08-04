@@ -345,14 +345,13 @@ Open a new chat tab in LM Studio. Enter a prompt like **what time is it?**
 
 You will by default see a popup dialog asking you to approve the tool tall. Review the request ("The model wants to run **get_current_time_for_mark** ...") and click "Allow".
 
-Observe the Result: Switch back to your terminal. After you approve the tool call, the client.py script will receive the final response from the LLM, which will now contain the list of files from your home directory, and print it to the console.
+Observe the result: after you approve the tool call the model running in LM Studio uses the results of the tool call to print a human-readable (not JSON) result.
 
-You have now successfully built and tested a local AI agent that uses a custom MCP server to interact with your file system, all running privately on your machine.
+## Advanced Considerations and Future Trajectories
 
-Part VI: Advanced Considerations and Future Trajectories
-Having successfully implemented a foundational MCP-powered agent, it is valuable to consider the broader context and future potential of this technology. MCP is more than just a protocol for single-tool use; it is an architectural primitive for building complex, multi-faceted AI systems.
+Having successfully implemented tools, it is valuable to consider the broader context and future potential of this technology. MCP is more than just a protocol for single-tool use; it is an architectural primitive for building complex, multi-faceted AI systems.
 
-6.1 Composing Multiple MCP Servers for Complex Workflows
+### Composing Multiple MCP Servers for Complex Workflows
 
 The true power of the Model Context Protocol is realized through composability. An MCP Host like LM Studio is not limited to a single server; it can connect to and manage multiple MCP servers simultaneously. This enables the creation of agents that can orchestrate actions across disparate systems and data sources.
 
@@ -368,7 +367,7 @@ Write a summary file: Finally, the agent uses the write_file tool from our serve
 
 This entire workflow is orchestrated by the LLM, which seamlessly switches between tools provided by two different, independent servers. This level of interoperability, made simple by the standardized protocol, is what enables the development of truly powerful and versatile AI assistants.
 
-6.2 The Emerging MCP Ecosystem: Registries and Pre-built Servers
+### The Emerging MCP Ecosystem: Registries and Pre-built Servers
 
 The standardization provided by MCP is fostering a vibrant ecosystem of tools and integrations. A growing number of pre-built MCP servers are available for popular enterprise and developer tools, including Google Drive, Slack, GitHub, Postgres, and Stripe. This allows developers to quickly add powerful capabilities to their agents without having to write the integration code themselves.
 
@@ -376,15 +375,15 @@ To facilitate the discovery and management of these servers, the community is de
 
 This trend points toward the creation of a true "app store" or "plugin marketplace" for AI tools. A developer building an agent will be able to browse a registry, select the tools they need (e.g., a calendar tool, a weather tool, a stock trading tool), and easily add them to their Host application. This will dramatically accelerate the development of feature-rich agents and create a new "Tool Economy," where companies and individual developers can create and even monetize specialized MCP servers for niche applications.
 
-6.3 The Trajectory of Local-First AI Agents
+### The Trajectory of Local-First AI Agents
 
 The convergence of powerful open-source LLMs, accessible local inference engines like LM Studio, and a standardized tool protocol like MCP marks an inflection point for AI. It signals the rise of the local-first AI agent—a new class of applications that are private, personalized, and deeply integrated into a user's personal computing environment.
 
 The future of this technology extends beyond simple chat interfaces. We can anticipate the emergence of "ambient assistants" embedded directly into operating systems, IDEs, and other desktop applications. These assistants will use MCP as the common language to securely access and reason about a user's personal context—their local files, emails, calendar appointments, and contacts—without sending sensitive data to the cloud. They will be able to perform complex, multi-step tasks on the user's behalf, seamlessly blending the reasoning power of LLMs with the practical utility of desktop and web applications. MCP provides the critical, standardized plumbing that makes this future possible.
 
-6.4 Concluding Analysis and Recommendations
+### Concluding Analysis and Recommendations
 
-This report has detailed the architecture, strategy, and implementation of a local AI agent using the Model Context Protocol. The analysis yields several key conclusions:
+Here we have detailed the architecture, strategy, and implementation of tools written in Python and addressed the possibility of building a local AI agent using the Model Context Protocol. The key conclusions are:
 
 MCP successfully standardizes tool use, solving a fundamental integration problem and creating a foundation for a new, interoperable ecosystem of AI capabilities. Its design, inspired by the Language Server Protocol, effectively decouples tool providers from AI application providers.
 
