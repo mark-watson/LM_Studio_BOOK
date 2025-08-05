@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "local-fs-server": {
+    "math-and-time-and-files": {
       "command": "python",
       "args": [
         "/GITHUB/LM_Studio_BOOK/src/server.py"
