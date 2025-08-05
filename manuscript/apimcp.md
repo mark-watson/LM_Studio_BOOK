@@ -1,4 +1,4 @@
-# MCP with LM Studio Experiment
+# A technical Introduction to Model Context Protocol (MCP) and Experiments with LM Studio
 
 Here I will guide you, dear reader, through the process of using the Model Context Protocol (MCP). This is a long chapter. We will start with some backgrund material and then work through a few examples that you can easily modify for your own applications.
 

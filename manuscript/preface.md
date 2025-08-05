@@ -2,13 +2,13 @@
 
 LM Studio allows you to run LLMs locally on your own computer. The LM Studio app is not open source but it is free to use for personal use and/or internal business purposes. I suggest, dear reader, that you read their [terms of service](https://lmstudio.ai/app-terms). You can also bookmark LM Studio’s [online documentation](https://lmstudio.ai/docs/app).
 
-I (Mark Watson) have been a paid AI Practitioner and Researcher since 1982. Since 2013 I have worked on AI-related projects at Google, Capital One, and five startups. You can read more about me at [https://markwatson.com](https://markwatson.com).
+I have been a paid AI Practitioner and Researcher since 1982. Since 2013 I have worked on AI-related projects at Google, Capital One, and five startups. You can read more about me at [https://markwatson.com](https://markwatson.com).
 
 ## Setup LM Studio
 
 This book serves as your comprehensive guide to LM Studio, a powerful desktop application designed for developing and experimenting with Large Language Models (LLMs) locally on your computer. Building on your foundational knowledge of running local models, perhaps from reading the book “Ollama in Action: Building Safe, Private AI with LLMs, Function Calling and Agents” (read free online: [https://leanpub.com/ollama/read](https://leanpub.com/ollama/read) for the alternative local LLM tool Ollama, this book will delve specifically into how LM Studio empowers you to leverage your computer's CPU and, optionally, its GPU, to run openly available LLMs such as Llama 3.3, Phi-4, and Gemma 3. LM Studio provides a familiar chat interface and robust search and download functionality via Hugging Face, making it incredibly intuitive to get started. It supports running LLMs using llama.cpp on Mac, Windows, and Linux, and additionally supports Apple's MLX on Apple Silicon Macs, ensuring broad compatibility.
 
-To begin our journey with LM Studio, the process is straightforward: first, install the latest version of the application for your operating system from [https://lmstudio.ai/downloa](https://lmstudio.ai/download). Once installed, you will download your preferred LLM directly within LM Studio from the Discover tab, choosing from curated options or searching for specific models. I will often use the model **google/gemma-3n-e4b** in this book because is is a small yet highly effective model.
+To begin our journey with LM Studio, the process is straightforward: first, install the latest version of the application for your operating system from [https://lmstudio.ai/download](https://lmstudio.ai/download). Once installed, you will download your preferred LLM directly within LM Studio from the Discover tab, choosing from curated options or searching for specific models. I will often use the model **google/gemma-3n-e4b** in this book because is is a small yet highly effective model.
 
 After downloading the app, install with the "developer option" and then install at least one model, the next step is to load the model into your computer's memory via the Chat tab, a process that allocates the necessary memory for the model's weights and parameters. LM Studio also enhances your interaction by allowing you to chat with documents entirely offline, a feature known as "RAG" (Retrieval Augmented Generation), enabling completely private and local document interaction.
 
@@ -30,7 +30,7 @@ models on your own hardware. There have been many tech news articles warning tha
 
 After a short tutorial on running the LM Studio application interactively, this book is largely about running Large Language Models (LLMs) on your own hardware using LM Studio.
 
-To be clear dear reader, although I have a strong preference to running smaller LLMs on my own hardware, I also frequently use commercial LLM API vendors like Anthropic, OpenAI, ABACUS.AI, GROQ, and Google to take advantage of features like advanced models and scalability using cloud-based hardware.
+To be clear, dear reader, although I have a strong preference to running smaller LLMs on my own hardware, I also frequently use commercial LLM API vendors like Anthropic, OpenAI, ABACUS.AI, GROQ, and Google to take advantage of features like advanced models and scalability using cloud-based hardware.
 
 ## About the Author
 

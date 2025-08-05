@@ -70,7 +70,7 @@ No exact match found. Please choose a model from the list below.
   DavidAU/Llama-3.2-8X3B-MOE-Dark-Champion-Instruct-uncensored-abliterated-18.4B-GGUF 
 ```
 
-## Server Statsu and Control
+## Server Status and Control
 
 ```console
 $ lms server status

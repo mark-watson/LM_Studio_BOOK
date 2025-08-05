@@ -78,7 +78,7 @@ This Python script uses the official openai library to connect to a local AI mod
 
 It sends the question "What is the capital of France?" to your local model and prints its response to the console. The key is the base_url="http://localhost:1234/v1" line, which redirects the API request to the LM Studio server.
 
-In the next chapter we will cover "tool use" which also reffered to as "function calling" (i.e., we write Python functions, configure API calls to inform a model the names and required arguments for tools/functions).
+In the next chapter we will cover "tool use" which also referred to as "function calling" (i.e., we write Python functions, configure API calls to inform a model the names and required arguments for tools/functions).
 
 If you don't enable LM Server's inference API, you will see an error like:
 
