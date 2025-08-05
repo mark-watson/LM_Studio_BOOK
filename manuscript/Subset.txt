@@ -1,2 +1,4 @@
-apitools.md
-apimcp.md
+preface.md
+uiintro.md
+cliintro.md
+apiintro.md
