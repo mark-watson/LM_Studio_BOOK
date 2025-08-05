@@ -1,18 +1,20 @@
 # Tool Use / Function Calling
 
-The key to effective tool use with local models that aren't specifically fine-tuned for a specific application is to guide them with a very structured prompt. Dear reader, we can work around not having built-in supported tool use by creating a "template" that contains information about available tools we write ourselves and include in the template the names and arguments of each tool. Alternatively some combinations of models and client API libraries provide  the built-in functionality that we implement explicitly in this chapter.
+The key to effective tool use with local models that aren't specifically fine-tuned for tool use or function calling is to guide them with a very structured prompt that contains information for available functions and their arguments. Dear reader, we work around not having built-in supported tool use by creating a "template" that contains information about available tools we write ourselves and include in the template the names and arguments of each tool.
+
+Note that many models and inferencing platforms directly support tool use for some combinations of models and client API libraries.
 
 The advantage of "building it ourselves" is the flexibility of being able to use most models, libraries and inferencing platforms.
 
-Before we look at more complex tools we will first look at a simple example that is a common example: a tool to use a stubbed out wether API.
+Before we look at more complex tools we will first look at a simple example that is a common example: a tool to use a stubbed out weather API.
 
 ## An Initial Example: a Tool That is a Simple Python Function
 
 The first example in this chapter can be found in the file **LM_Studio_BOOK/src/tool_use/weather_tool.py** and uses these steps:
 
 - Define the tools: First, I need to define the functions that the AI can "call." These are standard Python functions. For this example, I'll create a simple get_weather function.
-- Create the prompt template: This is the most critical step for local models. I need to design a prompt that clearly explains the concept of tools, lists the available tools with their descriptions and parameters, and provides a format for the model to use when it wants to call a tool. The prompt should instruct the model to output a specific, parseable format, like JSON.
-- Set up a client for using the LM Studio service APIs: we use the openai Python library, configured to point to the local LM Studio server. This allows for a familiar and standardized way to interact with the local model.
+- Create the prompt template: This is the most critical step for local models that may not directly support tool use. We need to design a prompt that clearly lists the available tools with their descriptions and parameters, and provides a format for the model to use when it wants to call a tool. The prompt should instruct the model to output a specific, parseable format, like JSON.
+- Set up a client for using the LM Studio service APIs: in this example we use the OpenAI Python library, configured to point to the local LM Studio server. This allows for a familiar and standardized way to interact with the local model.
 - Process user input: The user's query is inserted into the prompt template.
 - Send a prompt to a model and get a response: In this example a complete prompt is sent to the Gemma model running in LM Studio.
 - Parse  the JSON response and execute a local Pyhton function in the client script: Check the model's response. If it contains the special JSON format for a tool call, then we parse it, execute the corresponding Python function with the provided arguments, and then feed the result back to the model for a final, natural language response. If the initial response from the model doesn't contain a tool call, then we just use the response.
@@ -175,11 +177,11 @@ What is the capital of France?
 Paris is the capital of France.
 ```
 
-We started with a simple example so you understand the low-level process of supporting tool use/function calling. In the next section we will generalize this example into a separate library and examples that uses this separate library.
+Here we tested two prompts: the first uses a tool and the second prompt does not use a tool. We started with a simple example so you understand the low-level process of supporting tool use/function calling. In the next section we will generalize this example into a separate library and examples that uses this separate library.
 
 ## Creating a General Purpose Tools/Function Calling Library
 
-This Python code in the file **tool_use/function_calling_library.py** provides a lightweight and flexible framework for integrating external functions as "tools" with a large language model (LLM), like tools hosted locally with a tool like LM Studio. **(Note: we will use tools hosted in the LM Studio application in the next chapter.)** Our library defines two primary classes: **ToolManager**, which handles the registration and schema generation for available tools, and **ConversationHandler**, which orchestrates the multi-step interaction between the user, the LLM, and the tools. This approach allows the LLM to decide when to call a function, execute it within the Python environment, and then use the result to formulate a more informed and capable response.
+This Python code in the file **tool_use/function_calling_library.py** provides a lightweight and flexible framework for integrating external functions as "tools" with a large language model (LLM). **(Note: we will use tools hosted in the LM Studio application in the next chapter.)** Our library defines two primary classes: **ToolManager**, which handles the registration and schema generation for available tools, and **ConversationHandler**, which orchestrates the multi-step interaction between the user, the LLM, and the tools. This approach allows the LLM to decide when to call a function, execute it within the Python environment, and then use the result to formulate a more informed and human readable response.
 
 ```python
 import json
@@ -406,7 +408,7 @@ The process concludes with a crucial **two-step execution logic**. If the `Conve
 
 ### First example Using Function Calling Library: Generate Python and Execute to Answer User Questions
 
-This Python script in the file **tool_use/test1.py** demonstrates a practical implementation of the **function_calling_library** by creating a specific tool designed to solve mathematical problems. It defines a function, `solve_math_problem`, that can execute arbitrary Python code in an insecure (you must trust the Python tool functions that you write), isolated process. The main part of the script then initializes the ToolManager and ConversationHandler from the library, registers the new math tool, and runs two example conversations: one that requires complex calculation, thereby triggering the tool, and another that is a general knowledge question, which the LLM answers directly.
+This Python script in the file **tool_use/test1.py** demonstrates a practical implementation of the **function_calling_library** by creating a specific tool designed to solve mathematical problems. It defines a function, `solve_math_problem`, that can execute arbitrary Python code in an insecure (you must trust the Python tool functions that the model writes for you to help solve a user prompt or query), isolated process. The main part of the script then initializes the ToolManager and ConversationHandler from the library developed in the previous section, registers the new math tool, and runs two example conversations: one that requires complex calculation, thereby triggering the tool, and another that is a general knowledge question, which the LLM answers directly.
 
 
 ```python
@@ -491,7 +493,7 @@ if __name__ == "__main__":
 
 The core of this script is the `solve_math_problem` function, which serves as the custom tool. It's designed to somewhat safely execute a string of Python code passed to it by the LLM. To avoid security risks associated with `eval()` or `exec()`, it writes the code to a temporary file (`temp.py`). It then uses Python's `subprocess` module to run this file as an entirely separate process. This sandboxes the execution, and the `capture_output=True` argument ensures that any output printed by the script (e.g., the result of a calculation) is captured. The function includes robust error handling, returning any standard error from the script if it fails, and a `finally` block to guarantee the temporary file is deleted, maintaining a clean state.
 
-Please note that code generated my the LLM is not fully sandboxed and this approach is tailored to personal development environments. For production consider running the generated code in a container.
+Please note that code generated my the LLM is not fully sandboxed and this approach is tailored to personal development environments. For production consider running the generated code in a container that limits network and file access activity, as appropriate.
 
 The main execution block, guarded by `if __name__ == "__main__"`, orchestrates the entire demonstration. It begins by configuring the `OpenAI` client to connect to a local server, such as LM Studio. It then instantiates the `ToolManager` and registers the `solve_math_problem` function as an available tool. With the tool ready, it creates a `ConversationHandler` to manage the flow. The script then showcases the system's decision-making ability by running two different prompts. The first asks for two distinct mathematical calculations, a task that perfectly matches the `solve_math_problem` tool's purpose. The second prompt is a general knowledge question that requires no calculation, demonstrating the LLM's ability to differentiate between tasks and answer directly when a tool is not needed.
 
@@ -527,7 +529,7 @@ Having a model generate Python code to solve problems is a powerful technique so
 
 ### Second example Using Function Calling Library: Stub of Weather API
 
-This is our original example, modified to use out library.
+This is our original example, modified to use the library developed earlier in this chapter.
 
 This script in the file **tool_use/test2.py** provides another clear example of how the **function_calling_library** can be used to extend an LLM's capabilities, this time by simulating an external data fetch from a weather API. It defines a simple `get_weather` function that returns mock data for specific cities. The main execution logic then sets up the ConversationHandler, registers this new tool, and processes two distinct user prompts to demonstrate the LLM's ability to intelligently decide when to call the function and when to rely on its own knowledge base.
 
@@ -588,7 +590,7 @@ The custom tool in this example is the `get_weather` function. It is defined wit
 
 The main execution block follows the same clear, step-by-step pattern as the previous example. It configures the client, initializes the `ToolManager`, and registers the `get_weather` function. After setting up the `ConversationHandler`, it runs two test cases that highlight the system's contextual awareness. The first prompt, "What's the weather like in Tokyo in celsius?", directly maps to the functionality of the `get_weather` tool, and the LLM correctly identifies this and generates the appropriate JSON tool call. The second prompt, which asks for commonalities between the two cities, is a conceptual question outside the tool's scope. In this case, the LLM correctly bypasses the tool-calling mechanism and provides a direct, creative answer from its own training data, demonstrating the robustness of the overall approach.
 
-Sample output:
+Here is sample output from the **test2.py** script:
 
 ```console
 $ uv run test2.py
@@ -615,4 +617,4 @@ What do Chicago and Tokyo have in common? Provide a fun answer.
 Chicago and Tokyo both have amazing food scenes! Chicago is famous for deep-dish pizza, while Tokyo is known for its incredible sushi and ramen. Both cities are culinary adventures! 🍕🍜
 ```
 
-Dear reader, you probably use many APIs in developing applications. Choose one or two and modify this last example to call real APIs, making sure that you use type metadata and a descriptive comment in each Python tool function you write. Then you can experiment with "chatting" with live application data from APIs that you use.
+Dear reader, you probably use many APIs in developing applications. Choose one or two of these APIs that you are familiar with and modify this last example to call real APIs, making sure that you use type metadata and a descriptive comment in each Python tool function you write. Then you can experiment with "chatting" with live application data from APIs that you use in your own work or research.
