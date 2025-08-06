@@ -6,7 +6,7 @@ Note that many models and inferencing platforms directly support tool use for so
 
 The advantage of "building it ourselves" is the flexibility of being able to use most models, libraries and inferencing platforms.
 
-Before we look at more complex tools we will first look at a simple example that is a common example: a tool to use a stubbed out weather API.
+Before we look at more complex tools we will first look at a simple common example: a tool to use a stubbed out weather API.
 
 ## An Initial Example: a Tool That is a Simple Python Function
 
@@ -14,7 +14,7 @@ The first example in this chapter can be found in the file **LM_Studio_BOOK/src/
 
 - Define the tools: First, I need to define the functions that the AI can "call." These are standard Python functions. For this example, I'll create a simple get_weather function.
 - Create the prompt template: This is the most critical step for local models that may not directly support tool use. We need to design a prompt that clearly lists the available tools with their descriptions and parameters, and provides a format for the model to use when it wants to call a tool. The prompt should instruct the model to output a specific, parseable format, like JSON.
-- Set up a client for using the LM Studio service APIs: in this example we use the OpenAI Python library, configured to point to the local LM Studio server. This allows for a familiar and standardized way to interact with the local model.
+- Set up a client for using the LM Studio service APIs: In this example we use the OpenAI Python library, configured to point to the local LM Studio server. This allows for a familiar and standardized way to interact with the local model.
 - Process user input: The user's query is inserted into the prompt template.
 - Send a prompt to a model and get a response: In this example a complete prompt is sent to the Gemma model running in LM Studio.
 - Parse  the JSON response and execute a local Pyhton function in the client script: Check the model's response. If it contains the special JSON format for a tool call, then we parse it, execute the corresponding Python function with the provided arguments, and then feed the result back to the model for a final, natural language response. If the initial response from the model doesn't contain a tool call, then we just use the response.
@@ -177,7 +177,7 @@ What is the capital of France?
 Paris is the capital of France.
 ```
 
-Here we tested two prompts: the first uses a tool and the second prompt does not use a tool. We started with a simple example so you understand the low-level process of supporting tool use/function calling. In the next section we will generalize this example into a separate library and examples that uses this separate library.
+Here we tested two prompts: the first uses a tool and the second prompt does not use a tool. We started with a simple example so you understand the low-level process of supporting tool use/function calling. In the next section we will generalize this example into two parts: a separate library and examples that uses this separate library.
 
 ## Creating a General Purpose Tools/Function Calling Library
 

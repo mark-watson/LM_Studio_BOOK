@@ -127,7 +127,7 @@ With a solid understanding of MCP principles and the LM Studio Host environment,
 
 ### Defining the Goal: Implementing Three Example Agent Resources
 
-The project goal is to design and build a Local File System Agent. This is an ideal first project as it is both useful and intuitive. In the next Python example we limit file system operaions to fetching the names of files in a local directory but you are free to extend this example to match your specific use cases. It directly demonstrates the value of MCP for local AI by enabling an LLM to interact with the user's own files, a common and highly useful task.
+The project goal is to design and build a Local File System Agent. This is an ideal first project as it is both useful and intuitive. In the next Python example we limit file system operations to fetching the names of files in a local directory but you are free to extend this example to match your specific use cases. It directly demonstrates the value of MCP for local AI by enabling an LLM to interact with the user's own files, a common and highly useful task.
 
 The agent will be equipped with three fundamental capabilities, which will be exposed as MCP tools:
 
@@ -381,7 +381,7 @@ The convergence of powerful open-source LLMs, accessible local inference engines
 
 The future of this technology extends beyond simple chat interfaces. We can anticipate the emergence of "ambient assistants" embedded directly into operating systems, IDEs, and other desktop applications. These assistants will use MCP as the common language to securely access and reason about a user's personal context like their local files, emails, calendar appointments, and contacts without sending sensitive data to the cloud. They will be able to perform complex, multi-step tasks on the user's behalf, seamlessly blending the reasoning power of LLMs with the practical utility of desktop and web applications. MCP provides the critical, standardized plumbing that makes this future possible.
 
-The importance of using local inference tools like LM Studio and Ollama is enabling developers to develop "privacy first" systems that either leak no persoanal or proprietary data, or less private data, to third party providers.
+The importance of using local inference tools like LM Studio and Ollama is enabling developers to develop "privacy first" systems that either leak no personal or proprietary data, or less private data, to third party providers.
 
 ### Concluding Analysis and Recommendations
 
@@ -401,4 +401,17 @@ The Model Context Protocol is more than just a technical specification; it is a 
 
 ## MCP Wrap Up
 
-Dear reader, while we have looked at the architecture and rationale behind MCP, we have barely skimmed the surface of possible applications. I am a computer scientist with a preference for manually designing and writing code. My personal approach to using MCP with tools to build agentic systems is to put most of the complexity in the Python tool implementations and to rely less than LLMs except to primarily act as a human friendly interface between user interactions and backend systems and data stores. In fairness, I have a "minority opinion" compared to most people working in our industry.
+Dear reader, while we have looked at the architecture and rationale behind MCP, we have barely skimmed the surface of possible applications. I am a computer scientist with a preference for manually designing and writing code. My personal approach to using MCP with tools to build agentic systems is to put most of the complexity in the Python tool implementations and to rely less on LLMs except to primarily act as a human friendly interface between user interactions and backend systems and data stores. In fairness, I have a "minority opinion" compared to most people working in our industry.
+
+I enjoy writing my own MCP servers and perhaps dear reader you do also. That said, a web search for "open source MCP server examples" shows a rich and developing ecosystem of open source projects that can easily be used with LM Studio and other MCP-compliant platforms. Some open source projects you might enjoy or find useful are:
+
+- Brave Search API [https://github.com/brave/brave-search-mcp-server](https://github.com/brave/brave-search-mcp-server)
+- Fetch content of web pages [https://github.com/modelcontextprotocol/servers/tree/main/src/fetch](https://github.com/modelcontextprotocol/servers/tree/main/src/fetch)
+- Access local file systems [https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem)
+
+
+Here are a few maintained lists of MCP servers:
+
+- GitHub user wong2' list: [https://github.com/wong2/awesome-mcp-servers](https://github.com/wong2/awesome-mcp-servers)
+- MCP servers from Docker: [https://github.com/docker/mcp-servers](https://github.com/docker/mcp-servers)
+
