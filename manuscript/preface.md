@@ -4,6 +4,9 @@ LM Studio allows you to run LLMs locally on your own computer. The LM Studio app
 
 I have been a paid AI Practitioner and Researcher since 1982. Since 2013 I have worked on AI-related projects at Google, Capital One, and five startups. You can read more about me at [https://markwatson.com](https://markwatson.com).
 
+Both the Python example programs for this book and the manuscript files are contained in this GitHub repository: [https://github.com/mark-watson/LM_Studio_BOOK](https://github.com/mark-watson/LM_Studio_BOOK).
+
+
 ## Setup LM Studio
 
 This book serves as your comprehensive guide to LM Studio, a powerful desktop application designed for developing and experimenting with Large Language Models (LLMs) locally on your computer. Building on your foundational knowledge of running local models, perhaps from reading the book “Ollama in Action: Building Safe, Private AI with LLMs, Function Calling and Agents” (read free online: [https://leanpub.com/ollama/read](https://leanpub.com/ollama/read) for the alternative local LLM tool Ollama, this book will delve specifically into how LM Studio empowers you to leverage your computer's CPU and, optionally, its GPU, to run openly available LLMs such as Llama 3.3, Phi-4, and Gemma 3. LM Studio provides a familiar chat interface and robust search and download functionality via Hugging Face, making it incredibly intuitive to get started. It supports running LLMs using llama.cpp on Mac, Windows, and Linux, and additionally supports Apple's MLX on Apple Silicon Macs, ensuring broad compatibility.

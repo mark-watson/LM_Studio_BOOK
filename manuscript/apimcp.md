@@ -1,4 +1,4 @@
-# A technical Introduction to Model Context Protocol and Experiments with LM Studio
+# A Technical Introduction to Model Context Protocol and Experiments with LM Studio
 
 Here I will guide you, dear reader, through the process of using the Model Context Protocol (MCP). This is a long chapter. We will start with some background material and then work through a few examples that you can easily modify for your own applications.
 
@@ -412,6 +412,6 @@ I enjoy writing my own MCP servers and perhaps dear reader you do also. That sai
 
 Here are a few maintained lists of MCP servers:
 
-- GitHub user wong2' list: [https://github.com/wong2/awesome-mcp-servers](https://github.com/wong2/awesome-mcp-servers)
+- GitHub user wong2's list: [https://github.com/wong2/awesome-mcp-servers](https://github.com/wong2/awesome-mcp-servers)
 - MCP servers from Docker: [https://github.com/docker/mcp-servers](https://github.com/docker/mcp-servers)
 
