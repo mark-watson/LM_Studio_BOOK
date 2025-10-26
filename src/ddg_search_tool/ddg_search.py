@@ -29,8 +29,6 @@ def debug_print(message):
 
 
 # --- Tool Definition ---
-# A general-purpose web search tool following the OpenAI tool-use format.
-# The tool takes a single 'query' string parameter.
 tools = [
     {
         "type": "function",
@@ -51,91 +49,121 @@ tools = [
     }
 ]
 
-# --- Prompt ---
-# A user message designed to trigger the web search tool.
-messages = [
-    {
-        "role": "user",
-        "content": "What is the weather in Flagstaff Arizona for today?"
-    }
-]
+def perform_ddg_search(query: str) -> str:
+    """
+    Performs a search using DuckDuckGo's Instant Answer API and returns a formatted result.
+    """
+    debug_print(f"Performing DDG search for: {query}")
+    search_url = f"https://api.duckduckgo.com/?q={query}&format=json"
+    
+    try:
+        response = requests.get(search_url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return json.dumps(data)
 
-# --- Payload ---
-# We bundle the model, messages, and tools into the request body.
-# "tool_choice": "auto" lets the model decide whether to use the tool.
-data = {
-    "model": MODEL_NAME,
-    "messages": messages,
-    "tools": tools,
-    "tool_choice": "auto",
-    "stream": False # We want a single JSON response, not a stream
-}
+    except requests.exceptions.RequestException as e:
+        debug_print(f"DDG search failed: {e}")
+        return f"Error performing search for '{query}': {e}"
+    except json.JSONDecodeError:
+        debug_print("Failed to decode JSON from DDG API.")
+        return f"Error decoding search results for '{query}'."
+
 
 # --- Main Execution ---
 def call_lm_studio():
     """
-    Sends the request to LM Studio and prints the tool call response.
+    Sends the request to LM Studio, handles tool calls, and prints the final response.
     """
     print(f"Sending request to LM Studio at {LM_STUDIO_URL} for model {MODEL_NAME}...")
     debug_print("Debug logging enabled.")
 
+    messages = [
+        {
+            "role": "user",
+            "content": "Perform a web search to check what is the population of Flagstaff Arizona?"
+        }
+    ]
+
+    data = {
+        "model": MODEL_NAME,
+        "messages": messages,
+        "tools": tools,
+        "tool_choice": "auto",
+        "stream": False
+    }
+
     try:
-        # Make the POST request
         if DEBUG:
-            debug_print(f"Request payload: {json.dumps(data, indent=2)}")
+            debug_print(f"Initial request payload: {json.dumps(data, indent=2)}")
 
-        response = requests.post(
-            LM_STUDIO_URL,
-            headers=HEADERS,
-            data=json.dumps(data),  # Use json.dumps to serialize the payload
-            timeout=60  # Set a reasonable timeout
-        )
-
-        debug_print(f"HTTP status received: {response.status_code}")
-
-        # Check for HTTP errors
+        response = requests.post(LM_STUDIO_URL, headers=HEADERS, data=json.dumps(data), timeout=60)
         response.raise_for_status()
-
-        # Parse the JSON response
         response_json = response.json()
 
-        print("\n--- Full Model Response ---")
+        print("\n--- Initial Model Response ---")
         print(json.dumps(response_json, indent=2))
 
-        # --- Check for Tool Call ---
         choice = response_json.get('choices', [])[0]
         message = choice.get('message', {})
+        
+        messages.append(message)
 
         if message.get('tool_calls'):
             print("\n--- Tool Call Detected! ---")
             tool_call = message['tool_calls'][0]
             function_name = tool_call['function']['name']
             function_args_str = tool_call['function']['arguments']
-
-            if DEBUG:
-                debug_print(f"Tool call payload: {json.dumps(tool_call, indent=2)}")
             
-            print(f"Function Name: {function_name}")
-            
-            # Parse the arguments string into a JSON object for readability
             try:
                 function_args = json.loads(function_args_str)
-                print("Function Arguments:")
-                print(json.dumps(function_args, indent=2))
+                query = function_args.get("query")
+
+                if function_name == "ddg-search" and query:
+                    search_result = perform_ddg_search(query)
+                    print(f"\n--- Search Result ---\n{search_result}")
+
+                    tool_message = {
+                        "role": "tool",
+                        "tool_call_id": tool_call['id'],
+                        "content": search_result
+                    }
+                    messages.append(tool_message)
+
+                    print("\n--- Sending search result back to the model... ---")
+                    
+                    follow_up_data = {
+                        "model": MODEL_NAME,
+                        "messages": messages,
+                        "stream": False
+                    }
+                    
+                    if DEBUG:
+                        debug_print(f"Follow-up request payload: {json.dumps(follow_up_data, indent=2)}")
+
+                    final_response = requests.post(LM_STUDIO_URL, headers=HEADERS, data=json.dumps(follow_up_data), timeout=60)
+                    final_response.raise_for_status()
+                    final_response_json = final_response.json()
+
+                    print("\n--- Final Model Response ---")
+                    print(json.dumps(final_response_json, indent=2))
+                    
+                    final_message = final_response_json.get('choices', [])[0].get('message', {})
+                    if final_message.get('content'):
+                        print("\n--- Final Answer ---")
+                        print(final_message['content'])
+
             except json.JSONDecodeError:
-                print(f"Function Arguments (raw string): {function_args_str}")
+                print(f"\n--- Could not decode tool call arguments: {function_args_str} ---")
+
         elif message.get('content'):
             debug_print("Model returned direct content without tool call.")
             print("\n--- No Tool Call Detected ---")
             print(f"Model Replied Directly: {message['content']}")
-        else:
-            debug_print("Response message missing both tool calls and content.")
-            print("\n--- Unexpected Response Format ---")
-            print("The response did not contain tool calls or message content.")
 
     except requests.exceptions.ConnectionError:
         print(f"\n[ERROR] Connection refused.", file=sys.stderr)
-        print("Please ensure your LM Studio server is running at {LM_STUDIO_URL}", file=sys.stderr)
+        print(f"Please ensure your LM Studio server is running at {LM_STUDIO_URL}", file=sys.stderr)
     except requests.exceptions.HTTPError as e:
         print(f"\n[ERROR] HTTP Error: {e.response.status_code} {e.response.reason}", file=sys.stderr)
         print(f"Response Body: {e.response.text}", file=sys.stderr)

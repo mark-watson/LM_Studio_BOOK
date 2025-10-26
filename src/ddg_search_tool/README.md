@@ -14,4 +14,3 @@ This project demos how to invoke an LM Studio hosted model with a DuckDuckGo sea
 - The `tools` definition advertises a single DuckDuckGo function (`ddg-search`) that accepts a `query` string describing the search to run.
 - `messages` seeds the conversation with the Mark Watson question; adjust the content or extend the list to experiment with other prompts.
 - The `debug_print` helper reports payloads, HTTP status codes, tool-call payloads, and fallback paths when you pass `--debug` or set the environment flag.
-

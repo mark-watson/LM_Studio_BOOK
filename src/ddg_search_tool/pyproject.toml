@@ -1,7 +1,7 @@
 [project]
 name = "ddg-search-tool"
 version = "0.1.0"
-description = "Add your description here"
+description = "MCP example using DDG search"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
