@@ -3,3 +3,5 @@
 You can read my book for free online or purchase it at:
 
 [https://leanpub.com/LMstudio](https://leanpub.com/LMstudio)
+
+![Book Cover](manuscript/resources/images/title.jpg)
