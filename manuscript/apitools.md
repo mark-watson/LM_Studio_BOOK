@@ -8,6 +8,9 @@ The advantage of "building it ourselves" is the flexibility of being able to use
 
 Before we look at more complex tools we will first look at a simple common example: a tool to use a stubbed out weather API.
 
+{width: "80%"}
+![Architecture diagram](images/apitools-architecture.png)
+
 ## An Initial Example: a Tool That is a Simple Python Function
 
 The first example in this chapter can be found in the file **LM_Studio_BOOK/src/tool_use/weather_tool.py** and uses these steps:

@@ -17,3 +17,7 @@ Run the examples using `uv`:
 uv run weather_tool.py
 uv run test1.py
 ```
+
+## Architecture
+
+![Architecture diagram](architecture.png)

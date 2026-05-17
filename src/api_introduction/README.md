@@ -19,3 +19,7 @@ uv run lmstudio_simple.py
 uv run lmstudio_library_example.py
 uv run openai_cmpatibility.py
 ```
+
+## Architecture
+
+![Architecture diagram](architecture.png)

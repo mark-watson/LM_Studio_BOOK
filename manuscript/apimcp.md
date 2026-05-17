@@ -2,6 +2,9 @@
 
 Here I will guide you, dear reader, through the process of using the Model Context Protocol (MCP). This is a long chapter. We will start with some background material and then work through a few examples that you can easily modify for your own applications.
 
+{width: "80%"}
+![Architecture diagram](images/apimcp-architecture.png)
+
 ## An Introduction to the Model Context Protocol
 
 The rapid evolution of Large Language Models (LLMs) has shifted the focus of AI development from model creation to model application. The primary challenge in this new era is no longer just generating coherent text, images, and videos, but also enabling LLMs to perceive, reason about, and act upon the world through external data and software tools. Here we learn a definitive architectural guide to the MCP, an open standard designed to solve this integration challenge. We study a complete strategy for leveraging MCP within a local, privacy-centric environment using LM Studio, culminating in an example Python implementation of a custom MCP compatible services that interact with models running on LM Studio.

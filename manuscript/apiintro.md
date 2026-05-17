@@ -19,6 +19,9 @@ When using the LM Studio inference APIs using Python scripts, you can't set the 
 
 For the examples in this chapter I manually selected and loaded the small but very capable model **google/gemma-3n-e4b**.
 
+{width: "80%"}
+![Architecture diagram](images/apiintro-architecture.png)
+
 ## Using the Python OpenAI Compatibility APIs
 
 You can find the Python script examples for this book in the GitHub repository [https://github.com/mark-watson/LM_Studio_BOOK](https://github.com/mark-watson/LM_Studio_BOOK) in the **src** directory. The example we now use is in the file **src/api_introduction/openai_cmpatibility.py**:

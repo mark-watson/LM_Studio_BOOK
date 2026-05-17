@@ -22,3 +22,7 @@ To see more detailed debug output including the raw JSON payloads, you can pass 
 ```bash
 uv run ddg_search.py --debug
 ```
+
+## Architecture
+
+![Architecture diagram](architecture.png)

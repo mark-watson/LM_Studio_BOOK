@@ -18,3 +18,7 @@ uv run server.py
 ```
 
 *Note: MCP servers are designed to be run as subprocesses by the client (e.g. LM Studio) and communicate over stdio, but you can run it manually for testing and development.*
+
+## Architecture
+
+![Architecture diagram](architecture.png)
