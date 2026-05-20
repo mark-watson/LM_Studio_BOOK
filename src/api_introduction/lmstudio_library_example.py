@@ -19,7 +19,7 @@ def get_llm_response_with_sdk(prompt):
         # Replace this with the identifier of a model you have downloaded.
         # e.g., "gemma-2-9b-it-gguf"
         print("Loading model...")
-        model = lms.llm("google/gemma-3n-e4b")
+        model = lms.llm("google/gemma-4-e2b")
 
         # Send a prompt to the loaded model.
         print("Sending prompt to the model...")

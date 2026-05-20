@@ -17,7 +17,7 @@ Just click on **Developer** to switch to that mode. This will expose all the adv
 
 When using the LM Studio inference APIs using Python scripts, you can't set the model, or even load a model. Instead, you must use the LM Studio application UI to choose and manually load a model. For Python applications I work on that require switching between different models, I don't use LM Studio, rather I then use Ollama ([read my Ollama book online](https://leanpub.com/ollama/read)).
 
-For the examples in this chapter I manually selected and loaded the small but very capable model **google/gemma-3n-e4b**.
+For the examples in this chapter I manually selected and loaded the small but very capable model **google/gemma-4-e2b**.
 
 {width: "80%"}
 ![Architecture diagram](images/apiintro-architecture.png)
@@ -172,7 +172,7 @@ def get_llm_response_with_sdk(prompt):
         # Replace this with the identifier of a model you have downloaded.
         # e.g., "gemma-2-9b-it-gguf"
         print("Loading model...")
-        model = lms.llm("google/gemma-3n-e4b")
+        model = lms.llm("google/gemma-4-e2b")
 
         # Send a prompt to the loaded model.
         print("Sending prompt to the model...")

@@ -154,7 +154,7 @@ print("\n" + "="*50 + "\n")
 run_conversation("What is the capital of France?")
 ```
 
-The output using LM Studio with the model **google/gemma-3n-e4b** looks like:
+The output using LM Studio with the model **google/gemma-4-e2b** looks like:
 
 ```console
 $ uv run weather_tool.py
